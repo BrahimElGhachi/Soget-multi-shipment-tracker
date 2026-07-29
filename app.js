@@ -1,29 +1,43 @@
-import express from 'express';
-import helmet from 'helmet';
-import morgan from 'morgan';
-import cors from 'cors';
+// Import Node.js / Express modules using ES Modules (import / export)
+import express from 'express'; // Web framework to build the API and handle routes
+import helmet from 'helmet';   // Security middleware to protect the app by setting various HTTP headers
+import morgan from 'morgan';   // Logging middleware to log HTTP requests in the console
+import cors from 'cors';       // Middleware to enable Cross-Origin Resource Sharing (CORS)
+import dotenv from 'dotenv';   // Module to load environment variables from the .env file
 
+// Load environment variables defined in the .env file into process.env
+dotenv.config();
+
+// Initialize the Express application
 const app = express();
-const PORT = 3000;
 
-// Sécurise l'application en configurant divers en-têtes HTTP
+// Define the server port: uses the one from .env, or defaults to 3000
+const PORT = process.env.PORT || 3000;
+
+// === MIDDLEWARES ===
+
+// Automatically adds HTTP security headers (e.g., XSS protection, hides Express header)
 app.use(helmet());
 
-// Journalise (log) les requêtes HTTP reçues dans le terminal en mode 'dev' (colorisé et concis)
+// Logs incoming HTTP requests in a concise and colorized format in the terminal (e.g., GET / 200 12ms)
 app.use(morgan('dev'));
 
-// Active le CORS (Cross-Origin Resource Sharing) pour permettre à d'autres sites/applications d'appeler cette API
+// Allows client applications (e.g., a React/Vue frontend) to communicate with this API
 app.use(cors());
 
-// Permet à Express de lire et de comprendre le format JSON reçu dans le corps (body) des requêtes
+// Parses incoming requests with JSON payloads and makes data accessible via req.body
 app.use(express.json());
 
-// Route principale pour vérifier que le serveur fonctionne
+// === ROUTES ===
+
+// Health check endpoint: responds with a JSON message on root '/' to verify API status
 app.get('/', (req, res) => {
-  res.json({ message: 'Serveur opérationnel ✅' })
+  res.json({ message: 'Serveur opérationnel ✅' });
 });
 
-// Lance le serveur sur le port spécifié
+// === SERVER START ===
+
+// Starts the HTTP server listening for connections on the specified port
 app.listen(PORT, () => {
-  console.log(`Serveur démarré sur http://localhost:${PORT}`)
+  console.log(`Serveur démarré sur http://localhost:${PORT}`);
 });
